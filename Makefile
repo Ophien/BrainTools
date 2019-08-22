@@ -5,13 +5,15 @@ LIBRARY_PATH=/usr/local/lib/libbraintools/
 INCLUDE_PATH=/usr/local/include/libbraintools/
 HEADERS=BrainTools.h
 
-CC=g++
+CXX=g++
+CXXFLAGS=-std=c++11
 
 all: $(OBJECTS)
 	ar -rvs $(LIBRARY) $(OBJECTS)
+	rm -rf *.o
 
 %.o : %.cpp
-	$(CC) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJECTS) $(LIBRARY)
