@@ -1,9 +1,9 @@
 
-OBJECTS=BrainTools.o
+OBJECTS=*.o
 LIBRARY=libbraintools.a
 LIBRARY_PATH=/usr/local/lib/libbraintools/
 INCLUDE_PATH=/usr/local/include/libbraintools/
-HEADERS=BrainTools.h
+HEADERS=*.h
 
 CXX=g++
 CXXFLAGS=-std=c++11

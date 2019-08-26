@@ -2,29 +2,38 @@
 
 using namespace braintools;
 
-BrainTools::BrainTools()
+BrainTools::BrainTools(const char* pInLoggerOutputFile, const char* pInProfilingOutputFile)
 {
+    // initialize logger
+    _logger = new Logger(pInLoggerOutputFile);
+
+    // initialize profiler
+    _profiler = new Profiler(pInProfilingOutputFile);
 }
 
 BrainTools::~BrainTools()
-{    
+{
 }
 
-void BrainTools::detectRmsAnomaly(std::vector<double> &rInRmsBuffer, std::vector<std::pair<int, int>> &rOutDetectedIndex, double &rInThreshold, int &rInRmsRefractionCount)
+void BrainTools::detectRmsAnomaly(std::vector<double> &rInRmsBuffer,
+                                  std::vector<std::pair<int, int>> &rOutDetectedIndex,
+                                  double &rInThreshold,
+                                  int &rInRmsRefractionCount,
+                                  void (*rInDetectedIntervalStartCallBack)(void *params),
+                                  void (*rInDetectedIntervalEndCallBack)(void *params),
+                                  void *rInDetectedIntervalStartCallBackParams,
+                                  void *rInDetectedIntervalEndCallBackParams)
 {
-    #if DEBUG_MODE==true
-        logger("Start setting up parameters");
-    #endif
+    BT_PROFILING_START("detectRmsAnomaly");
+    BT_LOGGER("detectRmsAnomaly", "Start setting up parameters");
 
     bool detection_enabled = true;
     bool detected = false;
     int rms_samples_since_detection = 0;
     int head_detected_sample = 0;
 
-    #if DEBUG_MODE==true
-        logger("End setting up parameters");
-        logger("Start detecting ripples");
-    #endif
+    BT_LOGGER("detectRmsAnomaly", "End setting up parameters");
+    BT_LOGGER("detectRmsAnomaly", "Start detecting ripples");
 
     for (unsigned int rms_sample = 0; rms_sample < rInRmsBuffer.size(); rms_sample++)
     {
@@ -32,9 +41,17 @@ void BrainTools::detectRmsAnomaly(std::vector<double> &rInRmsBuffer, std::vector
 
         if (detection_enabled && sample > rInThreshold)
         {
-            #if DEBUG_MODE==true
-                logger("\tStart ripple event");
-            #endif
+            BT_LOGGER("detectRmsAnomaly", "Start ripple event");
+
+            // call the detected interval start call back to trigger any special events
+            // when a detection occurs
+            if (rInDetectedIntervalStartCallBack != nullptr)
+            {
+                if (rInDetectedIntervalStartCallBackParams != nullptr)
+                    rInDetectedIntervalStartCallBack(rInDetectedIntervalStartCallBackParams);
+                else
+                    rInDetectedIntervalStartCallBack(nullptr);
+            }
 
             head_detected_sample = rms_sample;
             detected = true;
@@ -50,63 +67,62 @@ void BrainTools::detectRmsAnomaly(std::vector<double> &rInRmsBuffer, std::vector
         // enable detection again
         if (rms_samples_since_detection > rInRmsRefractionCount)
         {
+            // call the detected interval end call back to trigger any special events
+            // when a detection occurs
+            if (rInDetectedIntervalEndCallBack != nullptr)
+            {
+                if (rInDetectedIntervalEndCallBackParams != nullptr)
+                    rInDetectedIntervalEndCallBack(rInDetectedIntervalEndCallBackParams);
+                else
+                    rInDetectedIntervalEndCallBack(nullptr);
+            }
+
             // reset
             detected = false;
             detection_enabled = true;
             rms_samples_since_detection = 0;
 
-            #if DEBUG_MODE==true
-                logger("\tEnd ripple event");
-                logger("\tStart inserting event into output vector");
-            #endif
+            BT_LOGGER("detectRmsAnomaly", "End ripple event");
+            BT_LOGGER("detectRmsAnomaly", "Start inserting event into output vector");
 
             // insert detected interval into the output vector
-            rOutDetectedIndex.push_back(std::pair<int,int>(head_detected_sample, rms_sample));
+            rOutDetectedIndex.push_back(std::pair<int, int>(head_detected_sample, rms_sample));
 
-            #if DEBUG_MODE==true
-                logger("\tEnd inserting event into output vector");
-            #endif
+            BT_LOGGER("detectRmsAnomaly", "End inserting event into output vector");
         }
     }
 
-    #if DEBUG_MODE==true
-        logger("End detecting ripples");
-    #endif
+    BT_LOGGER("detectRmsAnomaly", "End detecting ripples");
+    BT_PROFILING_END("detectRmsAnomaly")
 }
 
 double BrainTools::calculateRms(const float *rInBuffer, int &rInBufferSize)
 {
+    BT_PROFILING_START("calculateRms");
+
     double sum = 0.0;
 
-    #if DEBUG_MODE==true
-        logger("Start calculating RMS");
-    #endif
+    BT_LOGGER("calculateRms", "Start calculating RMS");
 
     for (int cnt = 0; cnt < rInBufferSize; cnt++)
     {
         sum += pow(rInBuffer[cnt], 2.0);
     }
 
-    #if DEBUG_MODE==true
-        logger("End calculating RMS");
-        logger("Start calculating square root");
-    #endif
+    BT_LOGGER("calculateRms", "End calculating RMS");
+    BT_LOGGER("calculateRms", "Start calculating square root");
 
     double rms = sqrt(sum / (double)rInBufferSize);
 
-    #if DEBUG_MODE==true
-        logger("End calculating square root");
-    #endif
+    BT_LOGGER("calculateRms", "End calculating square root");
+    BT_PROFILING_END("calculateRms")
 
     return rms;
 }
 
 void BrainTools::checkStatus()
 {
+    BT_PROFILING_START("checkStatus")
     printf("Status OK\n");
-}
-
-void BrainTools::logger(const char* rInMsg)
-{
-    printf("%s\n", rInMsg);
+    BT_PROFILING_END("checkStatus")
 }
