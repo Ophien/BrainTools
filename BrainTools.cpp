@@ -122,7 +122,9 @@ double BrainTools::calculateRms(const float *rInBuffer, int &rInBufferSize)
 
 void BrainTools::checkStatus()
 {
-    BT_PROFILING_START("checkStatus")
+    BT_LOGGER("checkStatus", "Start checking status");
+    BT_PROFILING_START("checkStatus");
     printf("Status OK\n");
-    BT_PROFILING_END("checkStatus")
+    BT_PROFILING_END("checkStatus");
+    BT_LOGGER("checkStatus", "End checking status");
 }

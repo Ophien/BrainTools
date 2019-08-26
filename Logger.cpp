@@ -27,7 +27,7 @@ void Logger::logger(const char *pInMsg, const char *pInFunctionName)
     _outputFileMutex.lock();
 
     // open output file with write permission
-    _pOutputFile = fopen(_outputFilePath.c_str(), "w");
+    _pOutputFile = fopen(_outputFilePath.c_str(), "aw");
 
     // print out the desired log
     if (pInFunctionName != nullptr)
