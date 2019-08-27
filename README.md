@@ -1,4 +1,4 @@
-[users-guide]: https://github.com/Ophien/BrainTools/docs/usersguilde.md
+[users-guide]: https://github.com/Ophien/BrainTools/docs/usersguide.md
 
 # BrainTools
  
