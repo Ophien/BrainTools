@@ -1,6 +1,8 @@
+[users-guide]: https://github.com/Ophien/BrainTools/docs/usersguilde.md
+
 # BrainTools
  
-This repository contains the Brain Tools library which is a collection of algorithms for brain signals manipulation and classification through AI methods.
+This repository contains the Brain Tools library which is a collection of algorithms for brain signals manipulation and classification through AI methods. For examples on how to use this library, please see our [User's Guide](users-guide).
  
 # Pre requisites
  
@@ -38,6 +40,6 @@ You will be prompted to this project's container with the library already instal
 
 # Contributors
 
-Alysson Ribeiro da Silva (Maintainer)
-Cleiton Lopes Aguiar
-Elieyer Fermino de Oliveira
+* Alysson Ribeiro da Silva (Maintainer)
+* Cleiton Lopes Aguiar
+* Elieyer Fermino de Oliveira
