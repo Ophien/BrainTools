@@ -97,16 +97,13 @@ class BrainTools
     *                   an anomaly is marked.
     *   rInRmsRefractionCount -> int containing the number of RMS samples to be used a refractory time. After a detection it is
     *                            the number os samples the function will discard before starting a new detection.
-    *   detectedIntervalStartCallBack -> void* containing a pointer to a function that is called when a detection starts.
-    *   detectedIntervalEndCallBack -> void* containing a pointer to a function that is called when a detection ends.
-    *   detectedIntervaStartCallBackParams -> void* containing a pointer to the parameters to be passed to the start detection callback.
-    *   detectedIntervalEndCallBackParams -> void* containing a pointer to the parameters to be passed to the end detection callback.
     */
     void detectRmsAnomaly(std::vector<double> &rInRmsBuffer,
                           std::vector<std::pair<int, int>> &rOutDetectedIndex,
                           double &rInThreshold,
                           int &rInRmsRefractionCount);
-    double calculateRms(const float *rInBuffer, int &rInBufferSize);
+    void generateRmsBuffer(std::vector<double> &rInRmsBuffer, std::vector<double> &rOutRmsBuffer);
+    double calculateRms(const float *pInBuffer, int &rInBufferSize);
 
     /*
      * checkStats - This function allows to check if the library was loaded successfuly by other programs.

@@ -96,6 +96,11 @@ double BrainTools::calculateRms(const float *rInBuffer, int &rInBufferSize)
     return rms;
 }
 
+void BrainTools::generateRmsBuffer(std::vector<double> &rInRmsBuffer, std::vector<double> &rOutRmsBuffer)
+{
+    //TODO::implement this method
+}
+
 void BrainTools::checkStatus()
 {
     BT_LOGGER("checkStatus", "Start checking status");
