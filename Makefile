@@ -1,17 +1,12 @@
 
 OBJECTS=BrainTools.o
-OBJECTS+=Profiler.o 
-OBJECTS+=Logger.o
 LIBRARY=libbraintools.a
 LIBRARY_PATH=/usr/local/lib/libbraintools/
 INCLUDE_PATH=/usr/local/include/libbraintools/
 HEADERS=BrainTools.h
-HEADERS+=Profiler.h
-HEADERS+=Logger.h
 
 CXX=g++
 CXXFLAGS=-std=c++11
-
 all: $(OBJECTS)
 	ar -rvs $(LIBRARY) $(OBJECTS)
 	rm -rf *.o
