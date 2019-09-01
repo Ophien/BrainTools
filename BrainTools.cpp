@@ -15,25 +15,31 @@ BrainTools::~BrainTools()
 {
 }
 
-void BrainTools::detectRmsAnomaly(std::vector<double> &rInRmsBuffer,
+void BrainTools::detectRmsAnomaly(std::vector<double> &rInSamples,
                                   std::vector<std::pair<int, int>> &rOutDetectedIndex,
                                   double &rInThreshold,
-                                  int &rInRmsRefractionCount)
+                                  int &rInRmsRefractionCount,
+                                  int &rInRmsSize)
 {
     BT_PROFILING_START("detectRmsAnomaly");
     BT_LOGGER("detectRmsAnomaly", "Start setting up parameters");
 
     bool detection_enabled = true;
     bool detected = false;
+    bool refractory_count = false;
     int rms_samples_since_detection = 0;
     int head_detected_sample = 0;
 
     BT_LOGGER("detectRmsAnomaly", "End setting up parameters");
     BT_LOGGER("detectRmsAnomaly", "Start detecting ripples");
 
-    for (unsigned int rms_sample = 0; rms_sample < rInRmsBuffer.size(); rms_sample++)
+    // transform sample vector into rms array
+    std::vector<double> rms_buffer;
+    generateRmsBuffer(rInSamples, rms_buffer, rInRmsSize);
+
+    for (unsigned int rms_sample = 0; rms_sample < rms_buffer.size(); rms_sample++)
     {
-        double sample = rInRmsBuffer[rms_sample];
+        double sample = rms_buffer[rms_sample];
 
         if (detection_enabled && sample > rInThreshold)
         {
@@ -44,19 +50,15 @@ void BrainTools::detectRmsAnomaly(std::vector<double> &rInRmsBuffer,
             detection_enabled = false;
         }
 
-        // count rms samples since last detection
-        if (detected)
-        {
-            rms_samples_since_detection += 1;
-        }
-
         // enable detection again
-        if (rms_samples_since_detection > rInRmsRefractionCount)
+        if (detected && sample < rInThreshold)
         {
             // reset
             detected = false;
-            detection_enabled = true;
             rms_samples_since_detection = 0;
+
+            // starts counting refracotory rms
+            refractory_count = true;
 
             BT_LOGGER("detectRmsAnomaly", "End ripple event");
             BT_LOGGER("detectRmsAnomaly", "Start inserting event into output vector");
@@ -66,34 +68,27 @@ void BrainTools::detectRmsAnomaly(std::vector<double> &rInRmsBuffer,
 
             BT_LOGGER("detectRmsAnomaly", "End inserting event into output vector");
         }
+
+        // enable detection only if the refraction count is greater than the especified value.
+        if(rms_samples_since_detection > rInRmsRefractionCount)
+        {
+            detection_enabled = true;
+            refractory_count = false;
+        }
+
+        if(refractory_count)
+        {
+            rms_samples_since_detection++;
+        }
     }
 
     BT_LOGGER("detectRmsAnomaly", "End detecting ripples");
     BT_PROFILING_END("detectRmsAnomaly")
 }
 
-double BrainTools::calculateRms(const float *rInBuffer, int &rInBufferSize)
+void BrainTools::generateRmsBuffer(std::vector<double> &rInSamples, std::vector<double> &rOutRmsBuffer, int windowSize)
 {
-    BT_PROFILING_START("calculateRms");
-
-    double sum = 0.0;
-
-    BT_LOGGER("calculateRms", "Start calculating RMS");
-
-    for (int cnt = 0; cnt < rInBufferSize; cnt++)
-    {
-        sum += pow(rInBuffer[cnt], 2.0);
-    }
-
-    BT_LOGGER("calculateRms", "End calculating RMS");
-    BT_LOGGER("calculateRms", "Start calculating square root");
-
-    double rms = sqrt(sum / (double)rInBufferSize);
-
-    BT_LOGGER("calculateRms", "End calculating square root");
-    BT_PROFILING_END("calculateRms")
-
-    return rms;
+    //TODO::implement this method
 }
 
 void BrainTools::checkStatus()
