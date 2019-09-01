@@ -51,7 +51,13 @@
         std::vector<std::pair<int, int>> detected_rmssample_value_pairs;
         
         // call for the RMS based anomaly detection algorithm
+        // the detected anomalies will be stored inside the detected_rmssample_value_pairs, 
+        // where each pair is the rms start index and rms end index
         pBrainToolsObject->detectRmsAnomaly(rms_buffer, detected_rmssample_value_pairs, detection_threshold, refractory_rms_count);
+
+        // print anomalies
+        for(unsigned int rms_sample = 0; rms_sample < detected_rmssample_value_pair.size(); rms_sample++)
+            printf"start: %d, end: %d", (detected_rms_sample_value_pair[rms_sample].first, detected_rms_sample_value_pair[rms_sample].seconds);
 
         return 0;
     }

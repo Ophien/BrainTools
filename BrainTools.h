@@ -91,19 +91,20 @@ class BrainTools
     *                    It detectes anomalies based on a threshold. Furthermore, it allows to receive callback
     *                    functions to be called when the start or end of an anomaly appears.
     * Params:
-    *   rInRmsBuffer -> vector<double> containing the window to be verified.
+    *   rInSampleBuffer -> vector<double> containing the window to be verified.
     *   rOutDetectedIndex -> vector<pair<int,int>> containing the (rms index, and rms value) of the detected anomaly.
     *   rInThreshold -> int containing the threshold to be used to detect anomalies. If the RMS value exceds the threshold
     *                   an anomaly is marked.
     *   rInRmsRefractionCount -> int containing the number of RMS samples to be used a refractory time. After a detection it is
     *                            the number os samples the function will discard before starting a new detection.
+    *   rInRmsWindowSize -> int containing the size of the window used to calculate the RMS buffer
     */
-    void detectRmsAnomaly(std::vector<double> &rInRmsBuffer,
+    void detectRmsAnomaly(std::vector<double> &rInSampleBuffer,
                           std::vector<std::pair<int, int>> &rOutDetectedIndex,
                           double &rInThreshold,
-                          int &rInRmsRefractionCount);
-    void generateRmsBuffer(std::vector<double> &rInRmsBuffer, std::vector<double> &rOutRmsBuffer);
-    double calculateRms(const float *pInBuffer, int &rInBufferSize);
+                          int &rInRmsRefractionCount,
+                          int &rInRmsWindowSize);
+    void generateRmsBuffer(std::vector<double> &rInSamples, std::vector<double> &rOutRmsBuffer, int windowSize);
 
     /*
      * checkStats - This function allows to check if the library was loaded successfuly by other programs.
