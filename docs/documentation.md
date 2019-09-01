@@ -46,6 +46,7 @@
         // detection parameters
         double detection_threshold = 0.2;
         int refractory_rms_count = 1;
+        int rms_size = 2;
 
         // output sample - value pairs of all detected anomalies
         std::vector<std::pair<int, int>> detected_rmssample_value_pairs;
@@ -53,7 +54,7 @@
         // call for the RMS based anomaly detection algorithm
         // the detected anomalies will be stored inside the detected_rmssample_value_pairs, 
         // where each pair is the rms start index and rms end index
-        pBrainToolsObject->detectRmsAnomaly(rms_buffer, detected_rmssample_value_pairs, detection_threshold, refractory_rms_count);
+        pBrainToolsObject->detectRmsAnomaly(rms_buffer, detected_rmssample_value_pairs, detection_threshold, , rms_size);
 
         // print anomalies
         for(unsigned int rms_sample = 0; rms_sample < detected_rmssample_value_pair.size(); rms_sample++)
